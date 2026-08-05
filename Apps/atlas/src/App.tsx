@@ -3,6 +3,7 @@ import { LayoutGroup, MotionConfig, useReducedMotion } from 'framer-motion'
 import { AppShell } from './components/layout/AppShell'
 import { useBootMachine } from './components/boot/useBootMachine'
 import { AmbientMotionProvider } from './components/motion/AmbientMotionProvider'
+import { VoiceStateProvider } from './components/voice/VoiceStateProvider'
 import './styles/atlas.css'
 
 const BOOT_COMPLETED_KEY = 'atlas.boot-sequence.completed'
@@ -39,9 +40,11 @@ function App() {
   return (
     <MotionConfig reducedMotion="user">
       <AmbientMotionProvider>
-        <LayoutGroup id="atlas-shell">
-          <AtlasApplication />
-        </LayoutGroup>
+        <VoiceStateProvider>
+          <LayoutGroup id="atlas-shell">
+            <AtlasApplication />
+          </LayoutGroup>
+        </VoiceStateProvider>
       </AmbientMotionProvider>
     </MotionConfig>
   )

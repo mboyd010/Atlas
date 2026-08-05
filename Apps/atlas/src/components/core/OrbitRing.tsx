@@ -5,15 +5,16 @@ type OrbitRingProps = {
   className: string
   duration: number
   visible: boolean
+  scale: number
   direction?: 1 | -1
 }
 
-export function OrbitRing({ className, duration, visible, direction = 1 }: OrbitRingProps) {
+export function OrbitRing({ className, duration, visible, scale, direction = 1 }: OrbitRingProps) {
   return (
     <motion.span
       className={className}
       initial={{ opacity: 0, scale: 0.9, rotate: 0 }}
-      animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0.9, rotate: direction * 360 }}
+      animate={{ opacity: visible ? 1 : 0, scale: visible ? scale : 0.9, rotate: direction * 360 }}
       transition={{
         opacity: { duration: bootMotion.ringAppearDuration, ease: [0.22, 1, 0.36, 1] },
         scale: { duration: bootMotion.ringAppearDuration, ease: [0.22, 1, 0.36, 1] },

@@ -18,9 +18,10 @@ const particles: AmbientParticleData[] = Array.from({ length: ambientParticleMot
 type ParticleFieldProps = {
   phase: BootPhase
   bootActive: boolean
+  speedMultiplier: number
 }
 
-export function ParticleField({ phase, bootActive }: ParticleFieldProps) {
+export function ParticleField({ phase, bootActive, speedMultiplier }: ParticleFieldProps) {
   const assembling = hasReached(phase, 'coreAssembly')
   const active = assembling || !bootActive
 
@@ -41,6 +42,7 @@ export function ParticleField({ phase, bootActive }: ParticleFieldProps) {
             particle={particle}
             active={active}
             fadeDuration={bootMotion.ringAppearDuration}
+            speedMultiplier={speedMultiplier}
           />
         ))}
       </div>

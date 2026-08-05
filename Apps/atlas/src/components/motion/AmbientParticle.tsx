@@ -19,6 +19,7 @@ type AmbientParticleProps = {
   particle: AmbientParticleData
   active: boolean
   fadeDuration: number
+  speedMultiplier?: number
 }
 
 export const AmbientParticle = memo(function AmbientParticle({
@@ -26,11 +27,12 @@ export const AmbientParticle = memo(function AmbientParticle({
   particle,
   active,
   fadeDuration,
+  speedMultiplier = 1,
 }: AmbientParticleProps) {
   const clock = useAmbientClock()
   const reduceMotion = useReducedMotion()
-  const x = useTransform(clock, (time) => Math.sin((time / 1000 / particle.duration) * Math.PI * 2 + particle.phase) * particle.driftX)
-  const y = useTransform(clock, (time) => Math.cos((time / 1000 / particle.duration) * Math.PI * 2 + particle.phase) * particle.driftY)
+  const x = useTransform(clock, (time) => Math.sin((time / 1000 / (particle.duration / speedMultiplier)) * Math.PI * 2 + particle.phase) * particle.driftX)
+  const y = useTransform(clock, (time) => Math.cos((time / 1000 / (particle.duration / speedMultiplier)) * Math.PI * 2 + particle.phase) * particle.driftY)
 
   return (
     <motion.span

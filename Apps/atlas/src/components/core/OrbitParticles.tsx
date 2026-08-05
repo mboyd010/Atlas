@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { motion, useReducedMotion, useTransform } from 'framer-motion'
 import { bootMotion } from '../boot/BootTimeline'
 import { useAmbientClock } from '../motion/AmbientClock'
+import { VoiceState } from '../voice/VoiceState'
 
 const orbitParticles = [
   { id: 0, radius: 78, duration: 23, direction: 1, opacity: 0.42, phase: 0.15 },
@@ -22,13 +23,15 @@ const orbitParticles = [
 
 type OrbitParticlesProps = {
   active: boolean
+  speedMultiplier: number
+  state: VoiceState
 }
 
-export function OrbitParticles({ active }: OrbitParticlesProps) {
+export function OrbitParticles({ active, speedMultiplier, state }: OrbitParticlesProps) {
   return (
     <div className="orbit-particles" aria-hidden="true">
       {orbitParticles.map((particle) => (
-        <OrbitParticle key={particle.id} particle={particle} active={active} />
+        <OrbitParticle key={particle.id} particle={particle} active={active} speedMultiplier={speedMultiplier} state={state} />
       ))}
     </div>
   )
@@ -37,28 +40,32 @@ export function OrbitParticles({ active }: OrbitParticlesProps) {
 const OrbitParticle = memo(function OrbitParticle({
   particle,
   active,
+  speedMultiplier,
+  state,
 }: {
   particle: (typeof orbitParticles)[number]
   active: boolean
+  speedMultiplier: number
+  state: VoiceState
 }) {
   const clock = useAmbientClock()
   const reduceMotion = useReducedMotion()
   const x = useTransform(clock, (time) => {
-    const angle = (time / 1000 / particle.duration) * Math.PI * 2 * particle.direction + particle.phase
+    const angle = (time / 1000 / (particle.duration / speedMultiplier)) * Math.PI * 2 * particle.direction + particle.phase
     return Math.cos(angle) * particle.radius
   })
   const y = useTransform(clock, (time) => {
-    const angle = (time / 1000 / particle.duration) * Math.PI * 2 * particle.direction + particle.phase
+    const angle = (time / 1000 / (particle.duration / speedMultiplier)) * Math.PI * 2 * particle.direction + particle.phase
     return Math.sin(angle) * particle.radius * 0.58
   })
-  const scale = useTransform(clock, (time) => 0.8 + Math.sin((time / 1000 / particle.duration) * Math.PI * 4 + particle.phase) * 0.12)
+  const scale = useTransform(clock, (time) => 0.8 + Math.sin((time / 1000 / (particle.duration / speedMultiplier)) * Math.PI * 4 + particle.phase) * 0.12)
 
   return (
     <motion.span
       className="orbit-particles__particle"
       style={{ x: reduceMotion ? 0 : x, y: reduceMotion ? 0 : y, scale: reduceMotion ? 1 : scale }}
       initial={{ opacity: 0 }}
-      animate={{ opacity: active ? particle.opacity : 0 }}
+      animate={{ opacity: active ? particle.opacity * (state === VoiceState.Speaking ? 1.18 : 1) : 0 }}
       transition={{ opacity: { duration: bootMotion.ringAppearDuration, ease: [0.22, 1, 0.36, 1] } }}
     />
   )
